@@ -1,0 +1,15 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <CheckedTextView
+        android:id="@+id/checked_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:checked="false"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:hint="" />
+</RelativeLayout>
