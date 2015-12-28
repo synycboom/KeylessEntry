@@ -20,12 +20,13 @@ public class CustomAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<Device> mDevices;
     private Device mDevice;
-    private int checkedPos;
+    private static int checkedPos;
 
     public CustomAdapter(Activity activity, List<Device> mDevices) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         this.mDevices = mDevices;
+        checkedPos = -1;
     }
 
 

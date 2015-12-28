@@ -131,6 +131,6 @@ public class ConnectedThread extends Thread {
     }
 
     private void adminState(String message){
-
+        Log.i("ADMIN", message);
     }
 }

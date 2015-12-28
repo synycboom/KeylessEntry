@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
-    TextView resultText;
 
     private final BroadcastReceiver mAuthenticationReceiver = new BroadcastReceiver() {
         @Override
@@ -23,14 +22,18 @@ public class AuthenticationActivity extends AppCompatActivity {
             if(action.equals(BluetoothControl.AUTHENTICATION_ACTION)){
                 Bundle extras = intent.getExtras();
                 int result = extras.getInt(BluetoothControl.AUTHENTICATION_RESULT);
+                TextView resultText = (TextView) findViewById(R.id.authen_result_text);
                 switch (result){
                     case BluetoothControl.AUTHENTICATION_SUCCESS:
                         Log.i("AUTHEN", "Success");
                         resultText.setText("Sign in Success");
+                        resultText.setTextColor(0xCC0000);
+                        backToMainActivity();
                         break;
                     case BluetoothControl.AUTHENTICATION_FAILED:
                         Log.i("AUTHEN", "Failed");
                         resultText.setText("Sign in Failed");
+                        resultText.setTextColor(0x00CC00);
                         break;
                 }
 
@@ -46,8 +49,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         registerReceiver(mAuthenticationReceiver, new IntentFilter(BluetoothControl.AUTHENTICATION_ACTION));
         Button okButton = (Button) findViewById(R.id.authen_ok_button);
         Button cancelButton = (Button) findViewById(R.id.authen_cancel_button);
-        resultText = (TextView) findViewById(R.id.authen_result_text);
-        resultText.setVisibility(TextView.INVISIBLE);
 
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +74,10 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private void backToSearchingActivity(){
         startActivity(new Intent(AuthenticationActivity.this, SearchingActivity.class));
+    }
+
+    private void backToMainActivity(){
+        startActivity(new Intent(AuthenticationActivity.this, MainActivity.class));
     }
 
 }

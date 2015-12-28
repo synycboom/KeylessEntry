@@ -14,11 +14,20 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchingActivity extends Activity {
+
+    /**
+     * https://github.com/rahatarmanahmed/CircularProgressView *
+     * Circular progress library */
 
     private ListView mListView;
     private CustomAdapter mAdapter;
@@ -27,7 +36,10 @@ public class SearchingActivity extends Activity {
     private Button scanButton;
     private Button stopButton;
     private LinearLayout buttonSection;
-    private LinearLayout listViewSection;
+    private RelativeLayout background;
+    private CircularProgressView progressView;
+    private TextView progressViewText;
+
 
     private int connectionType;
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -49,7 +61,8 @@ public class SearchingActivity extends Activity {
                         startActivity(new Intent(SearchingActivity.this, AuthenticationActivity.class));
                         break;
                     case BluetoothControl.CONNECTION_FAILED:
-                        Log.i("Callback", "Failed");
+                        Toast failed =  Toast.makeText(SearchingActivity.this,"Connect Failed", Toast.LENGTH_SHORT);
+                        failed.show();
                         break;
                 }
 
@@ -94,11 +107,12 @@ public class SearchingActivity extends Activity {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.i("Discover", "Finish discovering");
                 //set result of devices to adapter listview
+                background.setVisibility(View.INVISIBLE);
 
                 if(!mDevices.isEmpty()){
                     buttonSection.removeAllViews();
-                    generateCancelButton();
                     generateOkButton();
+                    generateCancelButton();
                     showListViewOfDevices();
                 }
                 else{
@@ -157,14 +171,18 @@ public class SearchingActivity extends Activity {
                 connectionType= extras.getInt(BluetoothControl.CONNECTION_TAG);
             }
         } else {
-            connectionType= (int) savedInstanceState.getSerializable(BluetoothControl.CONNECTION_TAG);
+            connectionType = (int) savedInstanceState.getSerializable(BluetoothControl.CONNECTION_TAG);
         }
         setContentView(R.layout.activity_searching);
         registerReceiver(mBluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         registerReceiver(mBluetoothConnectionReceiver, new IntentFilter(BluetoothControl.BLUETOOTH_CONNECTION_ACTION));
 
         buttonSection = (LinearLayout) findViewById(R.id.searching_button_section);
-        listViewSection = (LinearLayout) findViewById(R.id.searching_listview_section);
+        background = (RelativeLayout) findViewById(R.id.seaching_background);
+        progressView = (CircularProgressView) findViewById(R.id.progress_view);
+        progressViewText = (TextView) findViewById(R.id.searching_scanning_text);
+
+        background.setVisibility(View.INVISIBLE);
 
         if(connectionType == BluetoothControl.SEARCHING)
             startSearching();
@@ -239,11 +257,25 @@ public class SearchingActivity extends Activity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mAdapter.getCheckedPosition() == -1){
+                    Toast prevent =  Toast.makeText(SearchingActivity.this,"Please select one of device(s)", Toast.LENGTH_SHORT);
+                    prevent.show();
+                    return;
+                }
+
+//                progressViewText.setText("Connecting");
+//                background.setVisibility(View.VISIBLE);
+                /**TODO
+                 * got a problem -- progress bar will not show if leave UI thread
+                 * maybe have to use async task to establish a connection in stead of java thread**/
+
                 BluetoothDevice dev = mDevices.get(mAdapter.getCheckedPosition()).getDeviceObj();
+
 //                TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 //                String uuid = tManager.getDeviceId();
+
                 Log.i("Test", dev.getName() + " " + dev.getAddress());
-                BluetoothControl.getInstance().setConnection( new ConnectThread(dev,getApplicationContext()) );
+                BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext()));
                 BluetoothControl.getInstance().getConnection().start();
             }
         });
@@ -272,6 +304,8 @@ public class SearchingActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if( ! BluetoothControl.getInstance().getAdapter().isDiscovering()){
+                    background.setVisibility(View.VISIBLE);
+                    progressView.startAnimation();
                     BluetoothControl.getInstance().getAdapter().startDiscovery();
                     buttonSection.removeAllViews();
                     generateStopButton();
@@ -290,7 +324,7 @@ public class SearchingActivity extends Activity {
             public void onClick(View v) {
                 if(BluetoothControl.getInstance().getAdapter().isDiscovering())
                     BluetoothControl.getInstance().getAdapter().cancelDiscovery();
-
+                background.setVisibility(View.INVISIBLE);
                 generateCancelButton();
             }
         });

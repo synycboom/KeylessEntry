@@ -25,8 +25,8 @@ public class MainActivity extends android.app.Activity {
                 Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
                 intent.putExtra( BluetoothControl.CONNECTION_TAG, BluetoothControl.SEARCHING);
                 if(!BluetoothControl.getInstance().getAdapter().isEnabled()){
-                    Toast test =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
-                    test.show();
+                    Toast prevent =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
+                    prevent.show();
                 }
                 else
                     startActivity(intent);
