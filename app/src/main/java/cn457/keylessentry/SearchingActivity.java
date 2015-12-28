@@ -36,6 +36,27 @@ public class SearchingActivity extends Activity {
 
     List<Device> mDevices = new ArrayList<Device>();
 
+    private final BroadcastReceiver mBluetoothConnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if(action.equals(BluetoothControl.BLUETOOTH_SOCKET)){
+                Bundle extras = intent.getExtras();
+                int result = extras.getInt(BluetoothControl.CONNECTION_RESULT);
+                switch (result){
+                    case BluetoothControl.CONNECTION_SUCCESS:
+                        Log.i("Callback", "Success");
+                        break;
+                    case BluetoothControl.CONNECTION_FAILED:
+                        Log.i("Callback", "Failed");
+                        break;
+                }
+
+
+            }
+        }
+    };
+
     private final BroadcastReceiver mBluetoothStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,14 +100,18 @@ public class SearchingActivity extends Activity {
                     generateOkButton();
                     showListViewOfDevices();
                 }
-                else{ //Scan devices again if there is no device found
-
+                else{
+                    if (BluetoothControl.getInstance().getAdapter().isDiscovering()) {
+                        BluetoothControl.getInstance().getAdapter().cancelDiscovery();
+                    }
+                    buttonSection.removeAllViews();
+                    generateScanButton();
                 }
 
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //bluetooth device found
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mDevices.add(new Device(device.getAddress(),device.getName()));
+                mDevices.add( new Device( device.getAddress(), device.getName(), device ) );
                 Log.i("Device","Found device " + device.getName());
             }
         }
@@ -135,6 +160,7 @@ public class SearchingActivity extends Activity {
         }
         setContentView(R.layout.activity_searching);
         registerReceiver(mBluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        registerReceiver(mBluetoothConnectionReceiver, new IntentFilter(BluetoothControl.BLUETOOTH_SOCKET));
 
         buttonSection = (LinearLayout) findViewById(R.id.searching_button_section);
         listViewSection = (LinearLayout) findViewById(R.id.searching_listview_section);
@@ -212,7 +238,12 @@ public class SearchingActivity extends Activity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToMainActivity();
+                BluetoothDevice dev = mDevices.get(mAdapter.getCheckedPosition()).getDeviceObj();
+//                TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//                String uuid = tManager.getDeviceId();
+                Log.i("Test", dev.getName() + " " + dev.getAddress());
+                BluetoothControl.getInstance().setConnection( new ConnectThread(dev,getApplicationContext()) );
+                BluetoothControl.getInstance().getConnection().start();
             }
         });
 

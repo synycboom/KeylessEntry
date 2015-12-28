@@ -1,5 +1,7 @@
 package cn457.keylessentry;
 
+import android.bluetooth.BluetoothDevice;
+
 /**
  * Created by synycboom on 12/27/2015 AD.
  */
@@ -7,10 +9,12 @@ public class Device {
     private String address;
     private String deviceName;
     private boolean isChecked;
+    private BluetoothDevice deviceObj;
 
-    public Device(String address, String deviceName){
+    public Device(String address, String deviceName,BluetoothDevice deviceObj){
         this.address = address;
         this.deviceName = deviceName;
+        this.deviceObj = deviceObj;
         isChecked = false;
     }
     public void setAddress(String address){
@@ -31,8 +35,10 @@ public class Device {
     public String getAddress(){
         return address;
     }
-
     public String getDeviceName(){
         return deviceName;
+    }
+    public BluetoothDevice getDeviceObj(){
+        return deviceObj;
     }
 }

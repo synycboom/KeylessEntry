@@ -11,14 +11,15 @@ import java.util.UUID;
  */
 public class AcceptThread extends Thread {
     private final BluetoothServerSocket mmServerSocket;
-
+    private final UUID MY_UUID;
     public AcceptThread() {
+        MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
         // Use a temporary object that is later assigned to mmServerSocket,
         // because mmServerSocket is final
         BluetoothServerSocket tmp = null;
         try {
             // MY_UUID is the app's UUID string, also used by the client code
-            tmp = BluetoothControl.getInstance().getAdapter().listenUsingRfcommWithServiceRecord("SYNYCBOOM", new UUID(1212,12121));
+            tmp = BluetoothControl.getInstance().getAdapter().listenUsingRfcommWithServiceRecord("testAPP",MY_UUID);
         } catch (IOException e) { }
         mmServerSocket = tmp;
     }

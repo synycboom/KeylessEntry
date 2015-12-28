@@ -5,7 +5,6 @@ package cn457.keylessentry;
  */
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ public class CustomAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<Device> mDevices;
     private Device mDevice;
+    private int checkedPos;
 
     public CustomAdapter(Activity activity, List<Device> mDevices) {
         mInflater = (LayoutInflater) activity.getSystemService(
@@ -70,7 +70,12 @@ public class CustomAdapter extends BaseAdapter {
         return ((Device) getItem(position)).getIsChecked();
     }
 
+    public int getCheckedPosition(){
+        return checkedPos;
+    }
+
     public void setChecked(int position){
+        checkedPos = position;
         for(int i = 0;i < mDevices.size(); i++)
             if(i == position)
                 ((Device) getItem(i)).setChecked(true);
