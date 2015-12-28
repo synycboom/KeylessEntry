@@ -4,17 +4,17 @@ package cn457.keylessentry;
  * Created by synycboom on 12/27/2015 AD.
  */
 public class Device {
-    private int id;
+    private String address;
     private String deviceName;
     private boolean isChecked;
 
-    public Device(int id, String deviceName){
-        this.id = id;
+    public Device(String address, String deviceName){
+        this.address = address;
         this.deviceName = deviceName;
         isChecked = false;
     }
-    public void setId(int id){
-        this.id = id;
+    public void setAddress(String address){
+        this.address = address;
     }
 
     public void setDeviceName(String deviceName){
@@ -28,8 +28,8 @@ public class Device {
     public boolean getIsChecked(){
         return isChecked;
     }
-    public int getId(){
-        return id;
+    public String getAddress(){
+        return address;
     }
 
     public String getDeviceName(){

@@ -4,28 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/searching_listview_section"
+        android:layout_weight="7">
+
+        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/listview"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"/>
+        android:layout_height="fill_parent" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:id="@+id/searching_button_section"
         android:layout_weight="1">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Cancel"/>
+        <!--<Button-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:id="@+id/scan_button"-->
+            <!--android:text="Scan Devices"/>-->
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="OK"/>
+        <!--<Button-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="OK"/>-->
     </LinearLayout>
 
 </LinearLayout>
