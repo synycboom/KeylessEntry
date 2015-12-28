@@ -3,7 +3,7 @@
     package="cn457.keylessentry" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,11 @@
         <activity
             android:name=".SearchingActivity"
             android:label="@string/title_activity_searching"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".SharingActivity"
+            android:label="@string/title_activity_sharing"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

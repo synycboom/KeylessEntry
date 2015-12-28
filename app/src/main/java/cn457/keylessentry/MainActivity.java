@@ -17,10 +17,10 @@ public class MainActivity extends android.app.Activity {
 
         turnOnBluetooth();
 
-        Button connectOther = (Button) findViewById(R.id.find_other_button);
-        Button waitOther = (Button) findViewById(R.id.wait_other_button);
+        Button connectMasterKey = (Button) findViewById(R.id.masterkey_button);
+        Button standby = (Button) findViewById(R.id.entering_button);
 
-        connectOther.setOnClickListener(new View.OnClickListener() {
+        connectMasterKey.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
                 intent.putExtra( BluetoothControl.CONNECTION_TAG, BluetoothControl.SEARCHING);
@@ -33,7 +33,7 @@ public class MainActivity extends android.app.Activity {
             }
         });
 
-        waitOther.setOnClickListener(new View.OnClickListener() {
+        standby.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
                 intent.putExtra( BluetoothControl.CONNECTION_TAG, BluetoothControl.WAITING);

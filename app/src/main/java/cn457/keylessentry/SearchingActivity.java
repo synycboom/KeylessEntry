@@ -25,6 +25,7 @@ public class SearchingActivity extends Activity {
     private Button cancelButton;
     private Button okButton;
     private Button scanButton;
+    private Button stopButton;
     private LinearLayout buttonSection;
     private LinearLayout listViewSection;
 
@@ -138,9 +139,6 @@ public class SearchingActivity extends Activity {
         buttonSection = (LinearLayout) findViewById(R.id.searching_button_section);
         listViewSection = (LinearLayout) findViewById(R.id.searching_listview_section);
 
-        generateScanButton();
-        generateCancelButton();
-
         if(connectionType == BluetoothControl.SEARCHING)
             startSearching();
         if(connectionType == BluetoothControl.WAITING)
@@ -158,9 +156,6 @@ public class SearchingActivity extends Activity {
     @Override
     protected void onResume(){
         super.onResume();
-        if (!BluetoothControl.getInstance().getAdapter().isDiscovering()) {
-            BluetoothControl.getInstance().getAdapter().startDiscovery();
-        }
     }
     @Override
     protected void onDestroy() {
@@ -186,8 +181,7 @@ public class SearchingActivity extends Activity {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
         registerReceiver(mScanningDeviceReceiver, filter);
-        if( ! BluetoothControl.getInstance().getAdapter().isDiscovering())
-            BluetoothControl.getInstance().getAdapter().startDiscovery();
+        generateScanButton();
     }
 
     private void startWaiting(){
@@ -245,11 +239,31 @@ public class SearchingActivity extends Activity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToMainActivity();
+                if( ! BluetoothControl.getInstance().getAdapter().isDiscovering()){
+                    BluetoothControl.getInstance().getAdapter().startDiscovery();
+                    buttonSection.removeAllViews();
+                    generateStopButton();
+                }
             }
         });
         LinearLayout.LayoutParams lp = getButtonParam(1);
         buttonSection.addView(scanButton, lp);
+    }
+
+    private void generateStopButton(){
+        stopButton = new Button(this);
+        stopButton.setText("Stop");
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(BluetoothControl.getInstance().getAdapter().isDiscovering())
+                    BluetoothControl.getInstance().getAdapter().cancelDiscovery();
+
+                generateCancelButton();
+            }
+        });
+        LinearLayout.LayoutParams lp = getButtonParam(1);
+        buttonSection.addView(stopButton, lp);
     }
 
     private LinearLayout.LayoutParams getButtonParam(int weight){

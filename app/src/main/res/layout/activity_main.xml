@@ -32,15 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:id="@+id/find_other_button"
-                android:text="Connect to other phone"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:id="@+id/wait_other_button"
-                android:text="Wait for other phone"/>
+                android:text="Share key"/>
 
         </LinearLayout>
 
