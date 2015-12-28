@@ -40,12 +40,13 @@ public class SearchingActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if(action.equals(BluetoothControl.BLUETOOTH_SOCKET)){
+            if(action.equals(BluetoothControl.BLUETOOTH_CONNECTION_ACTION)){
                 Bundle extras = intent.getExtras();
                 int result = extras.getInt(BluetoothControl.CONNECTION_RESULT);
                 switch (result){
                     case BluetoothControl.CONNECTION_SUCCESS:
                         Log.i("Callback", "Success");
+                        startActivity(new Intent(SearchingActivity.this, AuthenticationActivity.class));
                         break;
                     case BluetoothControl.CONNECTION_FAILED:
                         Log.i("Callback", "Failed");
@@ -160,7 +161,7 @@ public class SearchingActivity extends Activity {
         }
         setContentView(R.layout.activity_searching);
         registerReceiver(mBluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-        registerReceiver(mBluetoothConnectionReceiver, new IntentFilter(BluetoothControl.BLUETOOTH_SOCKET));
+        registerReceiver(mBluetoothConnectionReceiver, new IntentFilter(BluetoothControl.BLUETOOTH_CONNECTION_ACTION));
 
         buttonSection = (LinearLayout) findViewById(R.id.searching_button_section);
         listViewSection = (LinearLayout) findViewById(R.id.searching_listview_section);

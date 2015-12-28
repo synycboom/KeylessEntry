@@ -15,10 +15,14 @@ public class BluetoothControl {
     public static String CONNECTION_TAG = "Connection Type";
     public static int SEARCHING = 1;
     public static int WAITING = 2;
-    public static final String BLUETOOTH_SOCKET = "STATE_OF_BLUETOOTH";
+    public static final String BLUETOOTH_CONNECTION_ACTION = "STATE_OF_BLUETOOTH";
     public static final String CONNECTION_RESULT = "result";
     public static final int CONNECTION_FAILED = 0;
     public static final int CONNECTION_SUCCESS = 1;
+    public static final String AUTHENTICATION_ACTION = "STATE_OF_BLUETOOTH";
+    public static final String AUTHENTICATION_RESULT = "result";
+    public static final int AUTHENTICATION_FAILED = 0;
+    public static final int AUTHENTICATION_SUCCESS = 1;
 
     private BluetoothControl(){
 

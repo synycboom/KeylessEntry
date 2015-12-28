@@ -53,15 +53,15 @@ public class ConnectThread extends Thread {
             // Unable to connect; close the socket and get out
             try {
                 mmSocket.close();
-                callbackToActivity(BluetoothControl.CONNECTION_FAILED);
+                callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
             } catch (IOException closeException) { }
             return;
         }
     }
 
-    public void callbackToActivity(int result){
+    public void callbackToSearchingActivity(int result){
         Intent intent = new Intent();
-        intent.setAction(BluetoothControl.BLUETOOTH_SOCKET);
+        intent.setAction(BluetoothControl.BLUETOOTH_CONNECTION_ACTION);
         intent.putExtra(BluetoothControl.CONNECTION_RESULT, result);
         context.sendBroadcast(intent);
     }
@@ -69,6 +69,11 @@ public class ConnectThread extends Thread {
     public void write(String message){
         byte[] b = message.getBytes(Charset.forName("UTF-8"));
         connection.write(b);
+    }
+
+    public void setContext(Context context){
+        this.context = context;
+        connection.setContext(context);
     }
 
     /** Will cancel an in-progress connection, and close the socket */
