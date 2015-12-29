@@ -8,7 +8,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
@@ -18,16 +17,18 @@ public class ConnectedThread extends Thread {
     private final int START = 0;
     private final int AUTHEN = 1;
     private final int ADMIN = 2;
+    private final int UNLOCK = 3;
     private int state = START;
+    private boolean isServiceRunning = false;
 
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
     private final Scanner input;
-    private final PrintWriter output;
     private Context context;
 
-    public ConnectedThread(BluetoothSocket socket, Context context) {
+    public ConnectedThread(BluetoothSocket socket, Context context,boolean isServiceRunning) {
+        this.isServiceRunning = isServiceRunning;
         this.context = context;
         mmSocket = socket;
         InputStream tmpIn = null;
@@ -43,7 +44,6 @@ public class ConnectedThread extends Thread {
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
         input = new Scanner(mmInStream);
-        output = new PrintWriter(tmpOut);
     }
 
     public void run() {
@@ -67,12 +67,16 @@ public class ConnectedThread extends Thread {
                         case ADMIN:
                             adminState(message);
                             break;
+                        case UNLOCK:
+                            unlockState(message);
+                            break;
                     }
                     message = "";
                 }
 
             } catch (Exception e) {
                 callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
+                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
                 break;
             }
         }
@@ -87,6 +91,7 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
+            Log.i("UnlockRequest", "SENT IT!!!!");
         } catch (IOException e) { }
     }
 
@@ -111,6 +116,20 @@ public class ConnectedThread extends Thread {
         context.sendBroadcast(intent);
     }
 
+    public void callbackToServiceUnlockRes(int result){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothControl.BLUETOOTH_UNLOCK_ACTION);
+        intent.putExtra(BluetoothControl.UNLOCK_RESULT, result);
+        context.sendBroadcast(intent);
+    }
+
+    public void callbackToServiceSend(int result){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothControl.BLUETOOTH_SEND_ACTION);
+        intent.putExtra(BluetoothControl.UNLOCK_SEND_RESULT, result);
+        context.sendBroadcast(intent);
+    }
+
     public void setContext(Context context){
         this.context = context;
     }
@@ -120,18 +139,48 @@ public class ConnectedThread extends Thread {
         try {
             mmSocket.close();
             input.close();
-            output.close();
         } catch (IOException e) { }
     }
 
 
 
     private void startState(String message){
+        if(isServiceRunning){
+            if(message.contains("UnlockStart")){
+                state = UNLOCK;
+                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_SUCCESS);
+            }else{
+                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
+            }
+            return;
+        }
+
         if(message.contains("AuthenticationStart")){
             state = AUTHEN;
             callbackToSearchingActivity(BluetoothControl.CONNECTION_SUCCESS);
         }else{
             callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
+        }
+    }
+
+    private void unlockState(String message){
+        Log.i("IN UNLOCK STATE","IN UNLOCK STATE");
+        if(message.contains("Welcome")){
+            callbackToServiceUnlockRes(BluetoothControl.UNLOCK_SUCCESS);
+//            synchronized (EntryService.sendingKeyLock) {
+//                try {
+//                    EntryService.sendingKeyLock.notify();
+//                } catch (Exception e) {}
+//            }
+            Log.i("IN UNLOCK STATE", "uNlOcK sUcCeSs");
+        }else{
+            callbackToServiceUnlockRes(BluetoothControl.UNLOCK_FAILED);
+//            synchronized (EntryService.sendingKeyLock) {
+//                try {
+//                    EntryService.sendingKeyLock.notify();
+//                } catch (Exception e) {}
+//            }
+            Log.i("IN UNLOCK STATE", "uNlOcK FAILEDDDDDDDDD");
         }
     }
 

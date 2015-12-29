@@ -264,7 +264,7 @@ public class SearchingActivity extends Activity {
 //                String uuid = tManager.getDeviceId();
 
                 Log.i("Test", dev.getName() + " " + dev.getAddress());
-                BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext()));
+                BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext(),false));
                 BluetoothControl.getInstance().getConnection().start();
             }
         });

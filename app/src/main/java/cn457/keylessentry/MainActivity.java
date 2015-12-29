@@ -1,6 +1,8 @@
 package cn457.keylessentry;
 
+import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends android.app.Activity {
-
+    Intent service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +20,7 @@ public class MainActivity extends android.app.Activity {
         turnOnBluetooth();
 
         Button connectMasterKey = (Button) findViewById(R.id.masterkey_button);
-        Button standby = (Button) findViewById(R.id.entering_button);
+        Button entryButton = (Button) findViewById(R.id.entering_button);
 
         connectMasterKey.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -28,8 +30,12 @@ public class MainActivity extends android.app.Activity {
                     Toast prevent =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
                     prevent.show();
                 }
-                else
+                else if(isMyServiceRunning(EntryService.class)){
+                    Toast prevent =  Toast.makeText(MainActivity.this,"Service is running", Toast.LENGTH_SHORT);
+                    prevent.show();
+                }else{
                     startActivity(intent);
+                }
             }
         });
 
@@ -40,11 +46,20 @@ public class MainActivity extends android.app.Activity {
 //            }
 //        });
 
-        standby.setOnClickListener(new View.OnClickListener() {
+        entryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
-                intent.putExtra( BluetoothControl.CONNECTION_TAG, BluetoothControl.WAITING);
-                startActivity(intent);
+                service = new Intent(MainActivity.this, EntryService.class);
+                if(!BluetoothControl.getInstance().getAdapter().isEnabled()){
+                    Toast prevent =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
+                    prevent.show();
+                }
+                else if(isMyServiceRunning(EntryService.class)){
+                    Toast prevent =  Toast.makeText(MainActivity.this,"Service is running", Toast.LENGTH_SHORT);
+                    prevent.show();
+                }else{
+                    startService(service);
+                }
+
             }
         });
     }
@@ -69,5 +84,15 @@ public class MainActivity extends android.app.Activity {
                 Log.i("Bluetooth", "Bluetooth is turned on");
             }
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

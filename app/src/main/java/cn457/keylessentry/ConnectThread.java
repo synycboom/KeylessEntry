@@ -18,10 +18,11 @@ public class ConnectThread extends Thread {
     private final BluetoothDevice mmDevice;
     private final UUID MY_UUID;
     private Context context;
-
+    private boolean isServiceRunning;
     private ConnectedThread connection = null;
 
-    public ConnectThread(BluetoothDevice device, Context context) {
+    public ConnectThread(BluetoothDevice device, Context context, boolean isServiceRunning) {
+        this.isServiceRunning = isServiceRunning;
         this.context = context;
         MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
         // Use a temporary object that is later assigned to mmSocket,
@@ -46,14 +47,25 @@ public class ConnectThread extends Thread {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
             mmSocket.connect();
-            connection = new ConnectedThread(mmSocket, context);
+            connection = new ConnectedThread(mmSocket, context,isServiceRunning);
             connection.start();
-            write("AuthenticationRequest");
+            if(isServiceRunning){
+                Log.i("UnlockRequest", "SEND NOW!!!!");
+                write("UnlockRequest");
+            }
+            else{
+                write("AuthenticationRequest");
+            }
         } catch (IOException connectException) {
             // Unable to connect; close the socket and get out
             try {
                 mmSocket.close();
-                callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
+                if(isServiceRunning){
+                    callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
+                }
+                else {
+                    callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
+                }
             } catch (IOException closeException) { }
             return;
         }
@@ -63,6 +75,13 @@ public class ConnectThread extends Thread {
         Intent intent = new Intent();
         intent.setAction(BluetoothControl.BLUETOOTH_CONNECTION_ACTION);
         intent.putExtra(BluetoothControl.CONNECTION_RESULT, result);
+        context.sendBroadcast(intent);
+    }
+
+    public void callbackToServiceSend(int result){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothControl.BLUETOOTH_SEND_ACTION);
+        intent.putExtra(BluetoothControl.UNLOCK_SEND_RESULT, result);
         context.sendBroadcast(intent);
     }
 
