@@ -50,7 +50,6 @@ public class ConnectThread extends Thread {
             connection = new ConnectedThread(mmSocket, context,isServiceRunning);
             connection.start();
             if(isServiceRunning){
-                Log.i("UnlockRequest", "SEND NOW!!!!");
                 write("UnlockRequest");
             }
             else{
@@ -80,8 +79,8 @@ public class ConnectThread extends Thread {
 
     public void callbackToServiceSend(int result){
         Intent intent = new Intent();
-        intent.setAction(BluetoothControl.BLUETOOTH_SEND_ACTION);
-        intent.putExtra(BluetoothControl.UNLOCK_SEND_RESULT, result);
+        intent.setAction(BluetoothControl.BLUETOOTH_UNLOCK_ACTION);
+        intent.putExtra(BluetoothControl.UNLOCK_RESULT, result);
         context.sendBroadcast(intent);
     }
 

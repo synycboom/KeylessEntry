@@ -27,8 +27,6 @@ public class BluetoothControl {
     /**Unlock Action**/
     public static final String BLUETOOTH_UNLOCK_ACTION = "BLUETOOTH_UNLOCK_ACTION";
     public static final String UNLOCK_RESULT = "UNLOCK_RESULT";
-    public static final String BLUETOOTH_SEND_ACTION = "BLUETOOTH_SEND_ACTION";
-    public static final String UNLOCK_SEND_RESULT = "UNLOCK_SEND_RESULT";
     public static final int UNLOCK_FAILED = 2;
     public static final int UNLOCK_SUCCESS = 3;
     public static final int UNLOCK_REQUESTPASS_FAILED = 4;

@@ -76,7 +76,7 @@ public class ConnectedThread extends Thread {
 
             } catch (Exception e) {
                 callbackToSearchingActivity(BluetoothControl.CONNECTION_FAILED);
-                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
+                callbackToService(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
                 break;
             }
         }
@@ -91,7 +91,6 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-            Log.i("UnlockRequest", "SENT IT!!!!");
         } catch (IOException e) { }
     }
 
@@ -116,17 +115,10 @@ public class ConnectedThread extends Thread {
         context.sendBroadcast(intent);
     }
 
-    public void callbackToServiceUnlockRes(int result){
+    public void callbackToService(int result){
         Intent intent = new Intent();
         intent.setAction(BluetoothControl.BLUETOOTH_UNLOCK_ACTION);
         intent.putExtra(BluetoothControl.UNLOCK_RESULT, result);
-        context.sendBroadcast(intent);
-    }
-
-    public void callbackToServiceSend(int result){
-        Intent intent = new Intent();
-        intent.setAction(BluetoothControl.BLUETOOTH_SEND_ACTION);
-        intent.putExtra(BluetoothControl.UNLOCK_SEND_RESULT, result);
         context.sendBroadcast(intent);
     }
 
@@ -148,9 +140,9 @@ public class ConnectedThread extends Thread {
         if(isServiceRunning){
             if(message.contains("UnlockStart")){
                 state = UNLOCK;
-                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_SUCCESS);
+                callbackToService(BluetoothControl.UNLOCK_REQUESTPASS_SUCCESS);
             }else{
-                callbackToServiceSend(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
+                callbackToService(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
             }
             return;
         }
@@ -164,23 +156,10 @@ public class ConnectedThread extends Thread {
     }
 
     private void unlockState(String message){
-        Log.i("IN UNLOCK STATE","IN UNLOCK STATE");
         if(message.contains("Welcome")){
-            callbackToServiceUnlockRes(BluetoothControl.UNLOCK_SUCCESS);
-//            synchronized (EntryService.sendingKeyLock) {
-//                try {
-//                    EntryService.sendingKeyLock.notify();
-//                } catch (Exception e) {}
-//            }
-            Log.i("IN UNLOCK STATE", "uNlOcK sUcCeSs");
+            callbackToService(BluetoothControl.UNLOCK_SUCCESS);
         }else{
-            callbackToServiceUnlockRes(BluetoothControl.UNLOCK_FAILED);
-//            synchronized (EntryService.sendingKeyLock) {
-//                try {
-//                    EntryService.sendingKeyLock.notify();
-//                } catch (Exception e) {}
-//            }
-            Log.i("IN UNLOCK STATE", "uNlOcK FAILEDDDDDDDDD");
+            callbackToService(BluetoothControl.UNLOCK_FAILED);
         }
     }
 
