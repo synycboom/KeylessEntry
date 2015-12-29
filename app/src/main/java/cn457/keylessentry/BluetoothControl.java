@@ -24,22 +24,32 @@ public class BluetoothControl {
     public static final int CONNECTION_FAILED = 0;
     public static final int CONNECTION_SUCCESS = 1;
 
+    /**Unlock Action**/
+    public static final String BLUETOOTH_UNLOCK_ACTION = "BLUETOOTH_UNLOCK_ACTION";
+    public static final String UNLOCK_RESULT = "UNLOCK_RESULT";
+    public static final String BLUETOOTH_SEND_ACTION = "BLUETOOTH_SEND_ACTION";
+    public static final String UNLOCK_SEND_RESULT = "UNLOCK_SEND_RESULT";
+    public static final int UNLOCK_FAILED = 2;
+    public static final int UNLOCK_SUCCESS = 3;
+    public static final int UNLOCK_REQUESTPASS_FAILED = 4;
+    public static final int UNLOCK_REQUESTPASS_SUCCESS = 5;
+
     /**Authentication Action**/
-    public static final String AUTHENTICATION_ACTION = "STATE_OF_BLUETOOTH";
-    public static final String AUTHENTICATION_RESULT = "result";
-    public static final int AUTHENTICATION_FAILED = 2;
-    public static final int AUTHENTICATION_SUCCESS = 3;
+    public static final String AUTHENTICATION_ACTION = "AUTHENTICATION_ACTION";
+    public static final String AUTHENTICATION_RESULT = "AUTHENTICATION_RESULT";
+    public static final int AUTHENTICATION_FAILED = 6;
+    public static final int AUTHENTICATION_SUCCESS = 7;
 
     /**ManageKey Action**/
-    public static final String MANAGEKEY_ACTION = "STATE_OF_BLUETOOTH";
-    public static final String MANAGEKEY_RESULT = "result";
-    public static final int MANAGEKEY_ADD_FAILED = 4;
-    public static final int MANAGEKEY_ADD_SUCCESS = 5;
-    public static final int MANAGEKEY_SHOW_FAILED = 6;
-    public static final int MANAGEKEY_SHOW_SUCCESS = 7;
-    public static final int MANAGEKEY_REMOVE_FAILED = 8;
-    public static final int MANAGEKEY_REMOVE_SUCCESS = 9;
-    public static final int MANAGEKEY_SIGNOUT_SUCCESS = 10;
+    public static final String MANAGEKEY_ACTION = "MANAGEKEY_ACTION";
+    public static final String MANAGEKEY_RESULT = "MANAGEKEY_RESULT";
+    public static final int MANAGEKEY_ADD_FAILED = 8;
+    public static final int MANAGEKEY_ADD_SUCCESS = 9;
+    public static final int MANAGEKEY_SHOW_FAILED = 10;
+    public static final int MANAGEKEY_SHOW_SUCCESS = 11;
+    public static final int MANAGEKEY_REMOVE_FAILED = 12;
+    public static final int MANAGEKEY_REMOVE_SUCCESS = 13;
+    public static final int MANAGEKEY_SIGNOUT_SUCCESS = 14;
     public static final String KEY_TAG = "key_tag";
     public static List<Key> keys;
 
