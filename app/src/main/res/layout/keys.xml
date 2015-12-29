@@ -4,12 +4,13 @@
 
 
     <CheckedTextView
-        android:id="@+id/checked_text_device"
+        android:id="@+id/checked_text_key"
         android:layout_width="match_parent"
         android:layout_height="50dip"
-        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:checked="false"
         android:gravity="center"
         android:textAlignment="center"
         android:hint="" />
+
 </RelativeLayout>

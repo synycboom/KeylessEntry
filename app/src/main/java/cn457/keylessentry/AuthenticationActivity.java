@@ -1,5 +1,6 @@
 package cn457.keylessentry;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +29,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                         Log.i("AUTHEN", "Success");
                         resultText.setText("Sign in Success");
                         resultText.setTextColor(0xCC0000);
-                        backToMainActivity();
+                        goToManageKeyActivity();
                         break;
                     case BluetoothControl.AUTHENTICATION_FAILED:
                         Log.i("AUTHEN", "Failed");
@@ -42,11 +43,29 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
     };
 
+    private final BroadcastReceiver mBluetoothStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        backToMainActivity();
+                        break;
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         registerReceiver(mAuthenticationReceiver, new IntentFilter(BluetoothControl.AUTHENTICATION_ACTION));
+        registerReceiver(mBluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         Button okButton = (Button) findViewById(R.id.authen_ok_button);
         Button cancelButton = (Button) findViewById(R.id.authen_cancel_button);
 
@@ -70,6 +89,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         unregisterReceiver(mAuthenticationReceiver);
+        unregisterReceiver(mBluetoothStateReceiver);
     }
 
     private void backToSearchingActivity(){
@@ -78,6 +98,10 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private void backToMainActivity(){
         startActivity(new Intent(AuthenticationActivity.this, MainActivity.class));
+    }
+
+    private void goToManageKeyActivity(){
+        startActivity(new Intent(AuthenticationActivity.this, ManageKeyActivity.class));
     }
 
 }

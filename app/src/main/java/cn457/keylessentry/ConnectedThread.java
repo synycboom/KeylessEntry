@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
@@ -23,6 +24,7 @@ public class ConnectedThread extends Thread {
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
     private final Scanner input;
+    private final PrintWriter output;
     private Context context;
 
     public ConnectedThread(BluetoothSocket socket, Context context) {
@@ -41,6 +43,7 @@ public class ConnectedThread extends Thread {
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
         input = new Scanner(mmInStream);
+        output = new PrintWriter(tmpOut);
     }
 
     public void run() {
@@ -101,6 +104,13 @@ public class ConnectedThread extends Thread {
         context.sendBroadcast(intent);
     }
 
+    public void callbackToManageKeyActivity(int result){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothControl.MANAGEKEY_ACTION);
+        intent.putExtra(BluetoothControl.MANAGEKEY_RESULT, result);
+        context.sendBroadcast(intent);
+    }
+
     public void setContext(Context context){
         this.context = context;
     }
@@ -109,8 +119,12 @@ public class ConnectedThread extends Thread {
     public void cancel() {
         try {
             mmSocket.close();
+            input.close();
+            output.close();
         } catch (IOException e) { }
     }
+
+
 
     private void startState(String message){
         if(message.contains("AuthenticationStart")){
@@ -131,6 +145,37 @@ public class ConnectedThread extends Thread {
     }
 
     private void adminState(String message){
-        Log.i("ADMIN", message);
+        if(message.contains("KeysAre:")){
+            message = message.replace("KeysAre:","");
+
+            if(message.equals("")){
+                BluetoothControl.keys.clear();
+                callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS);
+                return;
+            }
+
+            String[] keys = message.split(",");
+
+            for(String key : keys)
+                BluetoothControl.keys.add(new Key(key));
+
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS);
+        }
+        if(message.contains("RemoveSuccess")){
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_REMOVE_SUCCESS);
+        }
+
+        if(message.contains("AddSuccess")){
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_ADD_SUCCESS);
+        }
+
+        if(message.contains("AddFailed")){
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_ADD_FAILED);
+        }
+
+        if(message.contains("SignOut")){
+            state = START;
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SIGNOUT_SUCCESS);
+        }
     }
 }

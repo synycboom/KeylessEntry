@@ -30,7 +30,7 @@ public class SearchingActivity extends Activity {
      * Circular progress library */
 
     private ListView mListView;
-    private CustomAdapter mAdapter;
+    private CustomDeviceListAdapter mAdapter;
     private Button cancelButton;
     private Button okButton;
     private Button scanButton;
@@ -65,8 +65,6 @@ public class SearchingActivity extends Activity {
                         failed.show();
                         break;
                 }
-
-
             }
         }
     };
@@ -82,15 +80,6 @@ public class SearchingActivity extends Activity {
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
                         backToMainActivity();
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.i("Bluetooth", "Turning Off");
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.i("Bluetooth", "On");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.i("Bluetooth", "Turning on");
                         break;
                 }
             }
@@ -239,8 +228,8 @@ public class SearchingActivity extends Activity {
     }
 
     private void showListViewOfDevices(){
-        mListView = (ListView) findViewById(R.id.listview);
-        mAdapter = new CustomAdapter(this, mDevices);
+        mListView = (ListView) findViewById(R.id.listview_device);
+        mAdapter = new CustomDeviceListAdapter(this, mDevices);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

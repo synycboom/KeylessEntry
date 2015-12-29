@@ -33,6 +33,13 @@ public class MainActivity extends android.app.Activity {
             }
         });
 
+//        connectMasterKey.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, ManageKeyActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
         standby.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
