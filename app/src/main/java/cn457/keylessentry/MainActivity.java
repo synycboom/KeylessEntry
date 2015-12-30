@@ -19,6 +19,7 @@ public class MainActivity extends android.app.Activity {
 
         Button connectMasterKey = (Button) findViewById(R.id.masterkey_button);
         Button standby = (Button) findViewById(R.id.entering_button);
+        Button shareKey = (Button) findViewById(R.id.sharing_button);
 
         connectMasterKey.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -30,6 +31,13 @@ public class MainActivity extends android.app.Activity {
                 }
                 else
                     startActivity(intent);
+            }
+        });
+
+        shareKey.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SharingActivity.class);
+                startActivity(intent);
             }
         });
 
