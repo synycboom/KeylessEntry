@@ -158,8 +158,11 @@ public class ConnectedThread extends Thread {
     private void unlockState(String message){
         if(message.contains("Welcome")){
             callbackToService(BluetoothControl.UNLOCK_SUCCESS);
-        }else{
+        }else if(message.contains("TryAgain")){
             callbackToService(BluetoothControl.UNLOCK_FAILED);
+        }
+        else{
+            callbackToService(BluetoothControl.UNLOCK_STOP);
         }
     }
 

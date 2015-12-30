@@ -110,12 +110,15 @@ public class EntryService extends Service {
                             //all key cannot unlock
                             if(keyCount == keys.size()){
                                 Log.i("STATE", "UNLOCK FAILED");
-                                synchronized (connectMasterKeyLock) {
-                                    try {
-                                        notify();
-                                    } catch (Exception e) {
-                                        Log.i("Exception", e.toString());
-                                    }
+                                BluetoothControl.getInstance().getConnection().write("UnlockFailed");
+                            }
+                            break;
+                        case BluetoothControl.UNLOCK_STOP:
+                            synchronized (connectMasterKeyLock) {
+                                try {
+                                    connectMasterKeyLock.notify();
+                                } catch (Exception e) {
+                                    Log.i("Exception", e.toString());
                                 }
                             }
                             break;
@@ -146,9 +149,12 @@ public class EntryService extends Service {
                             Log.i("UnlockRequest", dev.getDeviceName());
                             //wait for connection finish (will be notified)
                             connectMasterKeyLock.wait();
-                            BluetoothControl.getInstance().getConnection().cancel();
+                            if(isUnlocked){
+                                Log.i("UNLOCK STATUS", dev.getDeviceName() + " is unlocked");
+                                isUnlocked = false;
+                            }
+                            BluetoothControl.getInstance().resetConnection();
                         }
-//                        wait(endTime - System.currentTimeMillis());
                         mDevices.clear();
                         BluetoothControl.getInstance().getAdapter().startDiscovery();
 
@@ -159,6 +165,7 @@ public class EntryService extends Service {
             }
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
+            unregisterReceiver(mUnlockResultReceiver);
             stopSelf();
         }
     }
@@ -167,50 +174,14 @@ public class EntryService extends Service {
      *
      ********************************************************************************************/
 
-    // Handler that receives messages from the thread
-    private final class TimerThread extends Thread {
-
-        @Override
-        public void run() {
-
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-            long endTime = System.currentTimeMillis() + stopTimeSec * 1000;
-            while (System.currentTimeMillis() < endTime) {
-                synchronized (connectMasterKeyLock) {
-                    try {
-                        if(BluetoothControl.getInstance().getAdapter().isDiscovering() && mDevices.isEmpty())
-                            continue;
-
-                        for(Device dev: mDevices){
-                            BluetoothControl.getInstance().setConnection(new ConnectThread(dev.getDeviceObj(), getApplicationContext(), true));
-                            BluetoothControl.getInstance().getConnection().start();
-                            Log.i("UnlockRequest", dev.getDeviceName());
-                            //wait for connection finish (will be notified)
-                            connectMasterKeyLock.wait();
-                            BluetoothControl.getInstance().getConnection().cancel();
-                        }
-//                        wait(endTime - System.currentTimeMillis());
-                        mDevices.clear();
-                        BluetoothControl.getInstance().getAdapter().startDiscovery();
-
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            stopSelf();
-        }
-    }
-
     @Override
     public void onCreate() {
         keys.add("asdasd");
-        keys.add("asdasdzx");
-        keys.add("aaa");
+        keys.add("asdaa");
+        keys.add("nklk");
         keys.add("ertert");
         keys.add("asdj");
+        keys.add("xxx");
 
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
@@ -248,7 +219,5 @@ public class EntryService extends Service {
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
         unregisterReceiver(mScanningDeviceReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
-//        unregisterReceiver(mUnlockResultReceiver);
-//        unregisterReceiver(mUnlockSendingKeyReceiver);
     }
 }

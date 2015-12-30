@@ -115,6 +115,8 @@ public class SearchingActivity extends Activity {
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //bluetooth device found
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(device.getName() == null)
+                    return;
                 mDevices.add( new Device( device.getAddress(), device.getName(), device ) );
                 Log.i("Device","Found device " + device.getName());
             }

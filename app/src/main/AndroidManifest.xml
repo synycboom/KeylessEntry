@@ -36,7 +36,7 @@
             android:label="@string/title_activity_authentication"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-        <activity android:name=".ManageKeyActivity" >
+        <activity android:name=".ManageRemoteKeyActivity" >
         </activity>
 
         <service
@@ -44,6 +44,9 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity android:name=".ManageLocalKeyActivity" >
+        </activity>
     </application>
 
 </manifest>

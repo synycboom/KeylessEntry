@@ -39,13 +39,6 @@ public class MainActivity extends android.app.Activity {
             }
         });
 
-//        connectMasterKey.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, ManageKeyActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
         entryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 service = new Intent(MainActivity.this, EntryService.class);
@@ -54,7 +47,7 @@ public class MainActivity extends android.app.Activity {
                     prevent.show();
                 }
                 else if(isMyServiceRunning(EntryService.class)){
-                    Toast prevent =  Toast.makeText(MainActivity.this,"Service is running", Toast.LENGTH_SHORT);
+                    Toast prevent =  Toast.makeText(MainActivity.this,"Cannot Start - Service is running", Toast.LENGTH_SHORT);
                     prevent.show();
                 }else{
                     startService(service);

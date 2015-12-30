@@ -20,7 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageKeyActivity extends AppCompatActivity {
+public class ManageRemoteKeyActivity extends AppCompatActivity {
 
     private ListView mListView;
     private CustomKeyListAdapter mAdapter;
@@ -196,11 +196,11 @@ public class ManageKeyActivity extends AppCompatActivity {
     }
 
     private void backToSearchingActivity(){
-        startActivity(new Intent(ManageKeyActivity.this, SearchingActivity.class));
+        startActivity(new Intent(ManageRemoteKeyActivity.this, SearchingActivity.class));
     }
 
     private void backToMainActivity(){
-        startActivity(new Intent(ManageKeyActivity.this, MainActivity.class));
+        startActivity(new Intent(ManageRemoteKeyActivity.this, MainActivity.class));
     }
 
     @Override

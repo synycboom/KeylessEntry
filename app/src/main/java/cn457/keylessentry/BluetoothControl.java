@@ -31,23 +31,24 @@ public class BluetoothControl {
     public static final int UNLOCK_SUCCESS = 3;
     public static final int UNLOCK_REQUESTPASS_FAILED = 4;
     public static final int UNLOCK_REQUESTPASS_SUCCESS = 5;
+    public static final int UNLOCK_STOP = 6;
 
     /**Authentication Action**/
     public static final String AUTHENTICATION_ACTION = "AUTHENTICATION_ACTION";
     public static final String AUTHENTICATION_RESULT = "AUTHENTICATION_RESULT";
-    public static final int AUTHENTICATION_FAILED = 6;
-    public static final int AUTHENTICATION_SUCCESS = 7;
+    public static final int AUTHENTICATION_FAILED = 7;
+    public static final int AUTHENTICATION_SUCCESS = 8;
 
     /**ManageKey Action**/
     public static final String MANAGEKEY_ACTION = "MANAGEKEY_ACTION";
     public static final String MANAGEKEY_RESULT = "MANAGEKEY_RESULT";
-    public static final int MANAGEKEY_ADD_FAILED = 8;
-    public static final int MANAGEKEY_ADD_SUCCESS = 9;
-    public static final int MANAGEKEY_SHOW_FAILED = 10;
-    public static final int MANAGEKEY_SHOW_SUCCESS = 11;
-    public static final int MANAGEKEY_REMOVE_FAILED = 12;
-    public static final int MANAGEKEY_REMOVE_SUCCESS = 13;
-    public static final int MANAGEKEY_SIGNOUT_SUCCESS = 14;
+    public static final int MANAGEKEY_ADD_FAILED = 9;
+    public static final int MANAGEKEY_ADD_SUCCESS = 10;
+    public static final int MANAGEKEY_SHOW_FAILED = 11;
+    public static final int MANAGEKEY_SHOW_SUCCESS = 12;
+    public static final int MANAGEKEY_REMOVE_FAILED = 13;
+    public static final int MANAGEKEY_REMOVE_SUCCESS = 14;
+    public static final int MANAGEKEY_SIGNOUT_SUCCESS = 15;
     public static final String KEY_TAG = "key_tag";
     public static List<Key> keys;
 
@@ -73,6 +74,10 @@ public class BluetoothControl {
 
     public ConnectThread getConnection(){
         return connection;
+    }
+
+    public void resetConnection(){
+        connection = null;
     }
 
     public void setAdapter(BluetoothAdapter mBluetoothAdapter){

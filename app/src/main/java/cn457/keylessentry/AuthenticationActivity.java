@@ -101,7 +101,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void goToManageKeyActivity(){
-        startActivity(new Intent(AuthenticationActivity.this, ManageKeyActivity.class));
+        startActivity(new Intent(AuthenticationActivity.this, ManageRemoteKeyActivity.class));
     }
 
 }
