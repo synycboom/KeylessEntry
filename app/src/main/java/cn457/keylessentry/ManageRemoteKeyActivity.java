@@ -106,7 +106,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_key);
+        setContentView(R.layout.activity_manage_remote_key);
         registerReceiver(mManageKeyReceiver, new IntentFilter(BluetoothControl.MANAGEKEY_ACTION));
         registerReceiver(mBluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         addButton = (Button) findViewById(R.id.manage_key_add_button);
@@ -183,8 +183,8 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
     }
 
     private void showListViewOfDevices(){
-        mListView = (ListView) findViewById(R.id.listview_device);
-        mAdapter = new CustomKeyListAdapter(this, mKeys);
+        mListView = (ListView) findViewById(R.id.listview_remote_key);
+        mAdapter = new CustomKeyListAdapter(this, mKeys, false);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

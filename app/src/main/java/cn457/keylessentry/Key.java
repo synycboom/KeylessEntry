@@ -5,13 +5,21 @@ package cn457.keylessentry;
  */
 public class Key {
     private String key;
+    private String name;
     private boolean isChecked;
 
 
-    public Key(String address){
-        this.key = address;
+    public Key(String key){
+        this.key = key;
         isChecked = false;
     }
+
+    public Key(String name, String key){
+        this.key = key;
+        this.name = name;
+        isChecked = false;
+    }
+
     public void setKey(String key){
         this.key = key;
     }
@@ -26,4 +34,5 @@ public class Key {
     public String getKey(){
         return key;
     }
+    public String getName(){ return name; }
 }

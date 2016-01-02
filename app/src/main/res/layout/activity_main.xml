@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:orientation="horizontal">
         
         <LinearLayout
@@ -18,8 +18,8 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/masterkey_button"
-                android:text="Connect to MasterKey"/>
+                android:id="@+id/manage_remote_key_button"
+                android:text="Manage Remote Key"/>
         </LinearLayout>
 
         <LinearLayout
@@ -43,6 +43,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/manage_local_key_button"
+            android:text="Manage Local Key"/>
 
         <Button
             android:layout_width="match_parent"

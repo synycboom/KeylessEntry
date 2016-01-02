@@ -22,13 +22,16 @@ public class CustomKeyListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<Key> mKeys;
     private Key mKey;
+    private boolean isLocal;
     private static Set<Integer> checkedPos;
 
-    public CustomKeyListAdapter(Activity activity, List<Key> mKeys) {
+
+    public CustomKeyListAdapter(Activity activity, List<Key> mKeys, boolean isLocal) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         this.mKeys = mKeys;
         checkedPos = new HashSet<Integer>();
+        this.isLocal = isLocal;
     }
 
 
@@ -61,7 +64,10 @@ public class CustomKeyListAdapter extends BaseAdapter {
         }
 
         mKey = mKeys.get(position);
-        mViewHolder.checkedTextView.setText(mKey.getKey());
+
+        if(isLocal) mViewHolder.checkedTextView.setText( mKey.getName() + " : " + mKey.getKey());
+        else mViewHolder.checkedTextView.setText(mKey.getKey());
+
         mViewHolder.checkedTextView.setChecked(mKey.getIsChecked());
         //Note that clickable have to be false otherwise onItemClick in SearchingActivity will not work !!!
         mViewHolder.checkedTextView.setClickable(false);

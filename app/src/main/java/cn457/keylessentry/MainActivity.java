@@ -19,24 +19,31 @@ public class MainActivity extends android.app.Activity {
 
         turnOnBluetooth();
 
-        Button connectMasterKey = (Button) findViewById(R.id.masterkey_button);
+        Button remoteKeyButton = (Button) findViewById(R.id.manage_remote_key_button);
+        Button localKeyButton = (Button) findViewById(R.id.manage_local_key_button);
         Button entryButton = (Button) findViewById(R.id.entering_button);
         Button shareKey = (Button) findViewById(R.id.sharing_button);
 
-        connectMasterKey.setOnClickListener(new View.OnClickListener() {
+        remoteKeyButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchingActivity.class);
-                intent.putExtra( BluetoothControl.CONNECTION_TAG, BluetoothControl.SEARCHING);
-                if(!BluetoothControl.getInstance().getAdapter().isEnabled()){
-                    Toast prevent =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
+                intent.putExtra(BluetoothControl.CONNECTION_TAG, BluetoothControl.SEARCHING);
+                if (!BluetoothControl.getInstance().getAdapter().isEnabled()) {
+                    Toast prevent = Toast.makeText(MainActivity.this, "Please turn on bluetooth", Toast.LENGTH_SHORT);
                     prevent.show();
-                }
-                else if(isMyServiceRunning(EntryService.class)){
-                    Toast prevent =  Toast.makeText(MainActivity.this,"Service is running", Toast.LENGTH_SHORT);
+                } else if (isMyServiceRunning(EntryService.class)) {
+                    Toast prevent = Toast.makeText(MainActivity.this, "Service is running", Toast.LENGTH_SHORT);
                     prevent.show();
-                }else{
+                } else {
                     startActivity(intent);
                 }
+            }
+        });
+
+        localKeyButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ManageLocalKeyActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -26,7 +26,7 @@ public class LocalKeyManager {
     private LocalKeyManager() { isSetup = false; }
 
     private String getAllName(){
-        return shared.getString("AllName", "%%^^&^&*(*^%#@$%$^&*(");
+        return shared.getString("AllName", "");
     }
 
     private void setAllName(String allName){
@@ -34,34 +34,70 @@ public class LocalKeyManager {
         editor.commit();
     }
 
-    public void setup(Context context){
-        if(!isSetup){
-            Log.i("Warning", "Please setup to use");
-            return;
+    private void removeSomeName(String name){
+
+        String allName = "";
+        String _allName[] = getAllName().split(",");
+        for(String _name: _allName){
+            if(! _name.equals(name))
+                allName += "," + _name;
         }
 
+        allName = allName.substring(1,allName.length());
+        Log.i("NAME",  allName);
+        editor.putString("AllName",allName);
+        editor.commit();
+    }
+
+    public void setup(Context context){
+        isSetup = true;
         this.context = context;
         keys = new HashSet<String>();
         shared = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE);
         editor = shared.edit();
     }
 
-    public String getVal(String name){
-        return shared.getString(name, "%%^^&^&*(*^%#@$%$^&*(");
+    public boolean getIsSetup(){
+        return isSetup;
+    }
+
+    public String getKey(String name){
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        return shared.getString(name, "");
     }
 
     public Set<String> getAll(){
-        if(!getAllName().equals("%%^^&^&*(*^%#@$%$^&*(")){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        keys.clear();
+
+        if(!getAllName().equals("")){
+            Log.i("all name", getAllName());
             String _allName[] = getAllName().split(",");
             for(String name: _allName){
-                keys.add(getVal(name));
+                if(!getKey(name).equals(""))
+                    keys.add(name + ":" + getKey(name));
             }
         }
         return keys;
     }
 
-    public void setVal(String name,String val){
-        if(!getAllName().equals("%%^^&^&*(*^%#@$%$^&*(")){
+    public void setKey(String name,String val){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        if(!getAllName().equals("")){
             boolean isEqual = false;
             String _allName[] = getAllName().split(",");
             for(String _name: _allName){
@@ -79,26 +115,54 @@ public class LocalKeyManager {
     }
 
     public void remove(String name){
-        editor.putString(name, "%%^^&^&*(*^%#@$%$^&*(");
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        editor.putString(name, "");
         editor.commit();
+
+        removeSomeName(name);
     }
 
     public void removeAll(){
-        if(!getAllName().equals("%%^^&^&*(*^%#@$%$^&*(")){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        if(!getAllName().equals("")){
             String _allName[] = getAllName().split(",");
             for(String name: _allName){
-                editor.putString(name, "%%^^&^&*(*^%#@$%$^&*(");
+                editor.putString(name, "");
                 editor.commit();
             }
         }
+
+        setAllName("");
     }
 
     public void select(String name){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
         editor.putBoolean("IS_SELECT:" + name, true);
         editor.commit();
     }
 
     public boolean isSelected(String name){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
         return shared.getBoolean("IS_SELECT:" + name, false);
     }
 }
