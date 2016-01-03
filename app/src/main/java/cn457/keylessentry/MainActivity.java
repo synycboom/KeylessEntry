@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends android.app.Activity {
-    Intent service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,18 +55,8 @@ public class MainActivity extends android.app.Activity {
 
         entryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                service = new Intent(MainActivity.this, EntryService.class);
-                if(!BluetoothControl.getInstance().getAdapter().isEnabled()){
-                    Toast prevent =  Toast.makeText(MainActivity.this,"Please turn on bluetooth", Toast.LENGTH_SHORT);
-                    prevent.show();
-                }
-                else if(isMyServiceRunning(EntryService.class)){
-                    Toast prevent =  Toast.makeText(MainActivity.this,"Cannot Start - Service is running", Toast.LENGTH_SHORT);
-                    prevent.show();
-                }else{
-                    startService(service);
-                }
-
+            Intent intent = new Intent(MainActivity.this, UnlockModeActivity.class);
+                startActivity(intent);
             }
         });
     }

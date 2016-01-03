@@ -13,11 +13,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class EntryService extends Service {
 
     private ServiceThread mSendingServiceWorker;
-    private int stopTimeSec = 120;
+    private int stopTimeSec = 300;
     private boolean isUnlocked = false;
     private int keyCount = 0;
     public static Object connectMasterKeyLock = new Object();
@@ -63,6 +64,7 @@ public class EntryService extends Service {
 
     private final class ServiceThread extends Thread {
 
+        private boolean isUnregister = false;
         private final BroadcastReceiver mUnlockResultReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -140,6 +142,11 @@ public class EntryService extends Service {
             while (System.currentTimeMillis() < endTime) {
                 synchronized (connectMasterKeyLock) {
                     try {
+
+                        //if there is no key then continue
+                        if(!setupKeys()){
+                            continue;
+                        }
                         if(BluetoothControl.getInstance().getAdapter().isDiscovering() && mDevices.isEmpty())
                             continue;
 
@@ -159,14 +166,23 @@ public class EntryService extends Service {
                         BluetoothControl.getInstance().getAdapter().startDiscovery();
 
                     } catch (Exception e) {
-                        Log.i("Exception", e.toString());
+                        Log.i("Exception", e.toString() + " Worker Thread");
                     }
+
                 }
             }
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
-            unregisterReceiver(mUnlockResultReceiver);
+            unRegisterReceiver();
             stopSelf();
+        }
+
+        public void unRegisterReceiver(){
+            if(isUnregister)
+                return;
+
+            unregisterReceiver(mUnlockResultReceiver);
+            isUnregister = true;
         }
     }
 
@@ -174,15 +190,38 @@ public class EntryService extends Service {
      *
      ********************************************************************************************/
 
+    private boolean setupKeys(){
+        Set<String> tmp =  LocalKeyManager.getInstance().getAll();
+        boolean isSelected = false;
+
+        if(tmp.isEmpty())
+            return false;
+
+        keys.clear();
+
+        for(String pair : tmp){
+            String p[] = pair.split(":");
+            if(LocalKeyManager.getInstance().isSelected(p[0]) ){
+//                Log.i("DATA", p[0] + "is selected");
+                keys.add(p[1]);
+                isSelected = true;
+            }
+        }
+
+        if(isSelected)
+            return true;
+        else
+            return false;
+
+    }
+
     @Override
     public void onCreate() {
-        keys.add("asdasd");
-        keys.add("asdaa");
-        keys.add("nklk");
-        keys.add("ertert");
-        keys.add("asdj");
-        keys.add("xxx");
 
+        if(BluetoothControl.getInstance().getAdapter() == null)
+            BluetoothControl.getInstance().setAdapter(BluetoothAdapter.getDefaultAdapter());
+
+        LocalKeyManager.getInstance().setup(getApplicationContext());
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
@@ -219,5 +258,6 @@ public class EntryService extends Service {
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
         unregisterReceiver(mScanningDeviceReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
+        mSendingServiceWorker.unRegisterReceiver();
     }
 }

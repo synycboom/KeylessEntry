@@ -44,7 +44,7 @@ public class LocalKeyManager {
         }
 
         allName = allName.substring(1,allName.length());
-        Log.i("NAME",  allName);
+//        Log.i("NAME",  allName);
         editor.putString("AllName",allName);
         editor.commit();
     }
@@ -80,7 +80,7 @@ public class LocalKeyManager {
         keys.clear();
 
         if(!getAllName().equals("")){
-            Log.i("all name", getAllName());
+//            Log.i("all name", getAllName());
             String _allName[] = getAllName().split(",");
             for(String name: _allName){
                 if(!getKey(name).equals(""))
@@ -121,6 +121,7 @@ public class LocalKeyManager {
             throw new AssertionError("You have to call setup method first");
         }
 
+        unSelect(name);
         editor.putString(name, "");
         editor.commit();
 
@@ -137,6 +138,7 @@ public class LocalKeyManager {
         if(!getAllName().equals("")){
             String _allName[] = getAllName().split(",");
             for(String name: _allName){
+                unSelect(name);
                 editor.putString(name, "");
                 editor.commit();
             }
@@ -153,6 +155,17 @@ public class LocalKeyManager {
         }
 
         editor.putBoolean("IS_SELECT:" + name, true);
+        editor.commit();
+    }
+
+    public void unSelect(String name){
+
+        if(!isSetup){
+            Log.i("Warning", "Please setup to use");
+            throw new AssertionError("You have to call setup method first");
+        }
+
+        editor.putBoolean("IS_SELECT:" + name, false);
         editor.commit();
     }
 

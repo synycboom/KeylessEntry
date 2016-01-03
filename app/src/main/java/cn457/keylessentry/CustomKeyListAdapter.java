@@ -22,16 +22,16 @@ public class CustomKeyListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<Key> mKeys;
     private Key mKey;
-    private boolean isLocal;
+    private String mode;
     private static Set<Integer> checkedPos;
 
 
-    public CustomKeyListAdapter(Activity activity, List<Key> mKeys, boolean isLocal) {
+    public CustomKeyListAdapter(Activity activity, List<Key> mKeys, String mode) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         this.mKeys = mKeys;
         checkedPos = new HashSet<Integer>();
-        this.isLocal = isLocal;
+        this.mode = mode;
     }
 
 
@@ -65,10 +65,17 @@ public class CustomKeyListAdapter extends BaseAdapter {
 
         mKey = mKeys.get(position);
 
-        if(isLocal) mViewHolder.checkedTextView.setText( mKey.getName() + " : " + mKey.getKey());
-        else mViewHolder.checkedTextView.setText(mKey.getKey());
+        if(mode.equals("local")) mViewHolder.checkedTextView.setText( mKey.getName() + " : " + mKey.getKey());
+        else if(mode.equals("remote")) mViewHolder.checkedTextView.setText(mKey.getKey());
+        else if(mode.equals("unlock")) mViewHolder.checkedTextView.setText( mKey.getName());
 
-        mViewHolder.checkedTextView.setChecked(mKey.getIsChecked());
+        if(mode.equals("unlock")){
+            mViewHolder.checkedTextView.setChecked(LocalKeyManager.getInstance().isSelected(mKey.getName()));
+        }
+        else{
+            mViewHolder.checkedTextView.setChecked(mKey.getIsChecked());
+        }
+
         //Note that clickable have to be false otherwise onItemClick in SearchingActivity will not work !!!
         mViewHolder.checkedTextView.setClickable(false);
 
@@ -91,6 +98,15 @@ public class CustomKeyListAdapter extends BaseAdapter {
         }
         checkedPos.add(position);
         ((Key) getItem(position)).setChecked(true);
+    }
+
+    public void setSelected(int position){
+        String name = ((Key) getItem(position)).getName();
+        if( LocalKeyManager.getInstance().isSelected(name) ){
+            LocalKeyManager.getInstance().unSelect(name);
+            return;
+        }
+        LocalKeyManager.getInstance().select(name);
     }
 
     private static class ViewHolder {

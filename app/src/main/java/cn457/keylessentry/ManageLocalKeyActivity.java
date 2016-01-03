@@ -54,7 +54,7 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
             LocalKeyManager.getInstance().setup(context);
         }
 
-        LocalKeyManager.getInstance().removeAll();
+//        LocalKeyManager.getInstance().removeAll();
         showListViewOfDevices();
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +158,7 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
         }
 
         background.setVisibility(View.INVISIBLE);
-        mAdapter = new CustomKeyListAdapter(this, mKeys, true);
+        mAdapter = new CustomKeyListAdapter(this, mKeys, "local");
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

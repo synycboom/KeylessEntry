@@ -135,8 +135,11 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
         okToAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(keyEditText.getText().equals("")){
+                if (containWhiteSpace(keyEditText.getText().toString())) {
+                    //show warning
+                    return;
+                }
+                else if ( ! (keyEditText.getText().toString().matches(".*\\w.*"))) {
                     //show warning
                     return;
                 }
@@ -184,7 +187,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
 
     private void showListViewOfDevices(){
         mListView = (ListView) findViewById(R.id.listview_remote_key);
-        mAdapter = new CustomKeyListAdapter(this, mKeys, false);
+        mAdapter = new CustomKeyListAdapter(this, mKeys, "remote");
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -201,6 +204,16 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
 
     private void backToMainActivity(){
         startActivity(new Intent(ManageRemoteKeyActivity.this, MainActivity.class));
+    }
+
+    private boolean containWhiteSpace(String text){
+        boolean containsWhitespace = false;
+        for (int i = 0; i < text.length() && !containsWhitespace; i++) {
+            if (Character.isWhitespace(text.charAt(i))){
+                containsWhitespace = true;
+            }
+        }
+        return containsWhitespace;
     }
 
     @Override

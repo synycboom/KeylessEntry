@@ -56,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/entering_button"
-            android:text="Wait for entering"/>
+            android:text="unlock mode"/>
     </LinearLayout>
 
 </LinearLayout>
