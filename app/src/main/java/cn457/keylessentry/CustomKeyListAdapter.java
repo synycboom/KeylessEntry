@@ -65,7 +65,7 @@ public class CustomKeyListAdapter extends BaseAdapter {
 
         mKey = mKeys.get(position);
 
-        if(mode.equals("local")) mViewHolder.checkedTextView.setText( mKey.getName() + " : " + mKey.getKey());
+        if(mode.equals("local")) mViewHolder.checkedTextView.setText( mKey.getName() );
         else if(mode.equals("remote")) mViewHolder.checkedTextView.setText(mKey.getKey());
         else if(mode.equals("unlock")) mViewHolder.checkedTextView.setText( mKey.getName());
 

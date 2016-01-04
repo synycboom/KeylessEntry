@@ -7,15 +7,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.*;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class EntryService extends Service {
+
+    /**Connection Action**/
+    public static final String ENTRY_SERVICE_ACTION = "ENTRY_SERVICE_ACTION";
+    public static final String ENTRY_SERVICE_RESULT = "ENTRY_SERVICE_RESULT";
+    public static final int ENTRY_SERVICE_START = 100;
+    public static final int ENTRY_SERVICE_STOP = 101;
 
     private ServiceThread mSendingServiceWorker;
     private int stopTimeSec = 300;
@@ -140,13 +146,17 @@ public class EntryService extends Service {
             // For our sample, we just sleep for 5 seconds.
             long endTime = System.currentTimeMillis() + stopTimeSec * 1000;
             while (System.currentTimeMillis() < endTime) {
+
+                synchronized (LocalKeyManager.getInstance()){
+                    //if there is no key then continue
+                    if(!setupKeys()){
+                        continue;
+                    }
+                }
+
                 synchronized (connectMasterKeyLock) {
                     try {
 
-                        //if there is no key then continue
-                        if(!setupKeys()){
-                            continue;
-                        }
                         if(BluetoothControl.getInstance().getAdapter().isDiscovering() && mDevices.isEmpty())
                             continue;
 
@@ -215,6 +225,13 @@ public class EntryService extends Service {
 
     }
 
+    private void callbackToUnlockModeActivity(int result){
+        Intent intent = new Intent();
+        intent.setAction(ENTRY_SERVICE_ACTION);
+        intent.putExtra(ENTRY_SERVICE_RESULT, result);
+        getApplicationContext().sendBroadcast(intent);
+    }
+
     @Override
     public void onCreate() {
 
@@ -241,8 +258,7 @@ public class EntryService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service is running", Toast.LENGTH_SHORT).show();
-
+        callbackToUnlockModeActivity(ENTRY_SERVICE_START);
         // If we get killed, after returning from here, restart
         return START_STICKY;
     }
@@ -255,9 +271,9 @@ public class EntryService extends Service {
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
         unregisterReceiver(mScanningDeviceReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
         mSendingServiceWorker.unRegisterReceiver();
+        callbackToUnlockModeActivity(ENTRY_SERVICE_STOP);
     }
 }

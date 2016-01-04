@@ -11,6 +11,7 @@ import java.util.Set;
  * Created by synycboom on 12/30/2015 AD.
  */
 public class LocalKeyManager {
+
     private static final String PREF_NAME = "LOCAL_KEYS";
     private SharedPreferences shared;
     private SharedPreferences.Editor editor;
@@ -70,6 +71,7 @@ public class LocalKeyManager {
         return shared.getString(name, "");
     }
 
+    //TODO Before use this method please wrap calling statement with synchronized block using object of this class to lock
     public Set<String> getAll(){
 
         if(!isSetup){

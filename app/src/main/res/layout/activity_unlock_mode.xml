@@ -44,9 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/add_button"
             android:id="@+id/unlock_start_button"
-            android:text="Start / Stop"
             android:layout_margin="10dp"/>
     </LinearLayout>
 

@@ -197,6 +197,7 @@ public class SearchingActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mBluetoothStateReceiver);
+        unregisterReceiver(mBluetoothConnectionReceiver);
         if(connectionType == BluetoothControl.SEARCHING){
             unregisterReceiver(mScanningDeviceReceiver);
         }

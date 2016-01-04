@@ -1,8 +1,10 @@
 package cn457.keylessentry;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,6 +30,30 @@ public class UnlockModeActivity extends AppCompatActivity {
     private Button startButton;
     private RelativeLayout background;
 
+    private final BroadcastReceiver mEntryServiceReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(EntryService.ENTRY_SERVICE_ACTION)) {
+                Bundle extras = intent.getExtras();
+                int state = extras.getInt(EntryService.ENTRY_SERVICE_RESULT);
+                switch (state) {
+                    case EntryService.ENTRY_SERVICE_START:
+                        Toast.makeText(getApplicationContext(), "Service started", Toast.LENGTH_SHORT).show();
+                        startButton.setText("Stop");
+                        startButton.setBackgroundColor(0xFFFF0000);
+                        break;
+                    case EntryService.ENTRY_SERVICE_STOP:
+                        startButton.setText("Start");
+                        startButton.setBackgroundColor(0xFF00FF00);
+                        Toast.makeText(getApplicationContext(), "Service stopped", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +62,25 @@ public class UnlockModeActivity extends AppCompatActivity {
         startButton = (Button) findViewById(R.id.unlock_start_button);
         background = (RelativeLayout) findViewById(R.id.unlock_mode_background);
 
+        registerReceiver(mEntryServiceReceiver, new IntentFilter(EntryService.ENTRY_SERVICE_ACTION));
         context = getApplicationContext();
 
         if( ! LocalKeyManager.getInstance().getIsSetup() ){
             LocalKeyManager.getInstance().setup(context);
         }
 
-        showListViewOfDevices();
+        synchronized (LocalKeyManager.getInstance()){
+            showListViewOfDevices();
+        }
+
+        if(isMyServiceRunning(EntryService.class)){
+            startButton.setText("Stop");
+            startButton.setBackgroundColor(0xFFFF0000);
+        }
+        else{
+            startButton.setText("Start");
+            startButton.setBackgroundColor(0xFF00FF00);
+        }
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,8 +94,6 @@ public class UnlockModeActivity extends AppCompatActivity {
                     prevent.show();
                 }
                 else if(isMyServiceRunning(EntryService.class)){
-                    Toast prevent =  Toast.makeText(UnlockModeActivity.this,"Stop service", Toast.LENGTH_SHORT);
-                    prevent.show();
                     stopService(service);
 
                 }else{
@@ -66,6 +102,12 @@ public class UnlockModeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(mEntryServiceReceiver);
     }
 
     private boolean setupListView(){

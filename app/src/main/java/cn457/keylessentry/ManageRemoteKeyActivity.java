@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -146,6 +147,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
                 String newKey = "Add:" + keyEditText.getText().toString();
                 Log.i("keyyyy", newKey);
                 BluetoothControl.getInstance().getConnection().write(newKey);
+                hideKeyboard();
                 addPanel.setVisibility(View.INVISIBLE);
             }
         });
@@ -153,6 +155,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
         cancelToAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 addPanel.setVisibility(View.INVISIBLE);
             }
         });
@@ -183,6 +186,18 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //prevent press back
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(mManageKeyReceiver);
+        unregisterReceiver(mBluetoothStateReceiver);
     }
 
     private void showListViewOfDevices(){
@@ -216,15 +231,11 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
         return containsWhitespace;
     }
 
-    @Override
-    public void onBackPressed() {
-        //prevent press back
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        unregisterReceiver(mManageKeyReceiver);
-        unregisterReceiver(mBluetoothStateReceiver);
+    private void hideKeyboard(){
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -54,8 +56,9 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
             LocalKeyManager.getInstance().setup(context);
         }
 
-//        LocalKeyManager.getInstance().removeAll();
-        showListViewOfDevices();
+        synchronized (LocalKeyManager.getInstance()){
+            showListViewOfDevices();
+        }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,18 +88,14 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
                     String newName = nameEditText.getText().toString();
 
                     LocalKeyManager.getInstance().setKey(newName, newKey);
-                    Toast addSuccess = Toast.makeText(getApplicationContext(), "Key added", Toast.LENGTH_SHORT);
-                    addSuccess.show();
+                    Toast.makeText(getApplicationContext(), "Key added", Toast.LENGTH_SHORT).show();
                     addPanel.setVisibility(View.INVISIBLE);
 
-                    //hide keyboard
-//                    View view = getCurrentFocus();
-//                    if (view != null) {
-//                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//                    }
+                    hideKeyboard();
 
-                    showListViewOfDevices();
+                    synchronized (LocalKeyManager.getInstance()) {
+                        showListViewOfDevices();
+                    }
                 }
             }
         });
@@ -104,6 +103,7 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
         cancelToAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 addPanel.setVisibility(View.INVISIBLE);
             }
         });
@@ -117,9 +117,16 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
                     return;
                 }
 
+                List<Integer> posToDelete = new ArrayList<Integer>();
                 for (int pos : mAdapter.getCheckedPosition()) {
                     //TODO remove local keys
                     LocalKeyManager.getInstance().remove(mKeys.get(pos).getName());
+                    posToDelete.add(pos);
+                }
+
+                //sort poToDelete in descending order to remove key with no effect to index
+                Collections.sort(posToDelete, Collections.reverseOrder());
+                for (int pos : posToDelete) {
                     mKeys.remove(pos);
                 }
 
@@ -177,6 +184,14 @@ public class ManageLocalKeyActivity extends AppCompatActivity {
             }
         }
         return containsWhitespace;
+    }
+
+    private void hideKeyboard(){
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
 
