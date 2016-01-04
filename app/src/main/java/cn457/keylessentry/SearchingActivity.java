@@ -61,8 +61,8 @@ public class SearchingActivity extends Activity {
                         startActivity(new Intent(SearchingActivity.this, AuthenticationActivity.class));
                         break;
                     case BluetoothControl.CONNECTION_FAILED:
-                        Toast failed =  Toast.makeText(SearchingActivity.this,"Connect Failed", Toast.LENGTH_SHORT);
-                        failed.show();
+//                        Toast failed =  Toast.makeText(SearchingActivity.this,"Connect Failed", Toast.LENGTH_SHORT);
+//                        failed.show();
                         break;
                 }
             }
@@ -100,7 +100,7 @@ public class SearchingActivity extends Activity {
 
                 if(!mDevices.isEmpty()){
                     buttonSection.removeAllViews();
-                    generateOkButton();
+                    generateConnectButton();
                     generateCancelButton();
                     showListViewOfDevices();
                 }
@@ -243,9 +243,9 @@ public class SearchingActivity extends Activity {
         });
     }
 
-    private void generateOkButton(){
+    private void generateConnectButton(){
         okButton = new Button(this);
-        okButton.setText("OK");
+        okButton.setText("Connect");
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,18 +255,16 @@ public class SearchingActivity extends Activity {
                     return;
                 }
 
-//                progressViewText.setText("Connecting");
-//                background.setVisibility(View.VISIBLE);
+                progressViewText.setText("Connecting");
+                background.setVisibility(View.VISIBLE);
+
                 /**TODO
                  * got a problem -- progress bar will not show if leave UI thread
                  * maybe have to use async task to establish a connection in stead of java thread**/
 
                 BluetoothDevice dev = mDevices.get(mAdapter.getCheckedPosition()).getDeviceObj();
 
-//                TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-//                String uuid = tManager.getDeviceId();
-
-                Log.i("Test", dev.getName() + " " + dev.getAddress());
+                Log.i("Connect to ", dev.getName() + " " + dev.getAddress());
                 BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext(),false));
                 BluetoothControl.getInstance().getConnection().start();
             }

@@ -55,7 +55,6 @@ public class EntryService extends Service {
             // When discovery finds a device
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 Log.i("Discover", "Start discovering");
-
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.i("Discover", "Finish discovering");
 
@@ -80,6 +79,7 @@ public class EntryService extends Service {
                     int result = extras.getInt(BluetoothControl.UNLOCK_RESULT);
                     switch (result){
                         case BluetoothControl.UNLOCK_REQUESTPASS_SUCCESS:
+                            Log.i("DEBUG", "SUCCESS before send");
                             if( keyCount < keys.size()) {
                                 BluetoothControl.getInstance().getConnection().write(keys.get(keyCount));
                             }
@@ -101,6 +101,7 @@ public class EntryService extends Service {
                             isUnlocked = true;
                             synchronized (connectMasterKeyLock) {
                                 try {
+                                    keyCount = 0;
                                     connectMasterKeyLock.notify();
                                 } catch (Exception e) {
                                     Log.i("Exception", e.toString());
@@ -124,6 +125,8 @@ public class EntryService extends Service {
                         case BluetoothControl.UNLOCK_STOP:
                             synchronized (connectMasterKeyLock) {
                                 try {
+                                    Log.i("STATE", "UNLOCK STOP");
+                                    keyCount = 0;
                                     connectMasterKeyLock.notify();
                                 } catch (Exception e) {
                                     Log.i("Exception", e.toString());
@@ -171,6 +174,7 @@ public class EntryService extends Service {
                                 isUnlocked = false;
                             }
                             BluetoothControl.getInstance().resetConnection();
+                            Log.i("CONNECTION", "Reset Connection");
                         }
                         mDevices.clear();
                         BluetoothControl.getInstance().getAdapter().startDiscovery();
@@ -271,6 +275,17 @@ public class EntryService extends Service {
 
     @Override
     public void onDestroy() {
+
+        if(BluetoothControl.getInstance().getConnection() != null){
+            try{
+                BluetoothControl.getInstance().getConnection().write("@#$#@$UnlockFailed");
+                BluetoothControl.getInstance().resetConnection();
+            }catch (NullPointerException e){
+                BluetoothControl.getInstance().resetConnection();
+            }
+        }
+
+
         unregisterReceiver(mScanningDeviceReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
         mSendingServiceWorker.unRegisterReceiver();

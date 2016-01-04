@@ -80,7 +80,8 @@ public class AuthenticationActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToSearchingActivity();
+                BluetoothControl.getInstance().resetConnection();
+                backToMainActivity();
             }
         });
     }
@@ -90,6 +91,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(mAuthenticationReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
+        BluetoothControl.getInstance().resetConnection();
     }
 
     private void backToSearchingActivity(){

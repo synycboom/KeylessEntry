@@ -45,11 +45,18 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
             if(action.equals(BluetoothControl.MANAGEKEY_ACTION)){
                 Bundle extras = intent.getExtras();
                 int result = extras.getInt(BluetoothControl.MANAGEKEY_RESULT);
+                String keysResult = extras.getString(BluetoothControl.MANAGEKEY_KEYS);
                 switch (result){
                     case BluetoothControl.MANAGEKEY_SHOW_SUCCESS:
                         Log.i("MANAGE", "Show Success");
 
+                        String[] keys = keysResult.split(",");
+
+                        for(String key : keys)
+                            BluetoothControl.keys.add(new Key(key));
+
                         if(BluetoothControl.keys.isEmpty()){
+                            Log.i("DEBUG", "Why it is empty??");
                             background.setVisibility(View.VISIBLE);
                             break;
                         }
@@ -62,12 +69,9 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
                     case BluetoothControl.MANAGEKEY_SHOW_FAILED:
                         Log.i("MANAGE", "Show Failed");
                         break;
-                    case BluetoothControl.MANAGEKEY_ADD_SUCCESS:
-                        Log.i("MANAGE", "Add Success");
-                        BluetoothControl.getInstance().getConnection().write("ShowKey");
-                        break;
                     case BluetoothControl.MANAGEKEY_ADD_FAILED:
                         Log.i("MANAGE", "Add Failed");
+                        Toast.makeText(getApplicationContext(),"Storage is full", Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothControl.MANAGEKEY_REMOVE_SUCCESS:
                         Log.i("MANAGE", "Remove Success");
@@ -78,6 +82,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
                         break;
                     case BluetoothControl.MANAGEKEY_SIGNOUT_SUCCESS:
                         Log.i("MANAGE", "Sign Out");
+                        BluetoothControl.getInstance().resetConnection();
                         backToMainActivity();
                         break;
                 }
@@ -129,6 +134,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("Add Button","Show Add Button");
+                keyEditText.setText("");
                 addPanel.setVisibility(View.VISIBLE);
             }
         });
@@ -198,6 +204,7 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(mManageKeyReceiver);
         unregisterReceiver(mBluetoothStateReceiver);
+        BluetoothControl.getInstance().resetConnection();
     }
 
     private void showListViewOfDevices(){
@@ -211,10 +218,6 @@ public class ManageRemoteKeyActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
-    }
-
-    private void backToSearchingActivity(){
-        startActivity(new Intent(ManageRemoteKeyActivity.this, SearchingActivity.class));
     }
 
     private void backToMainActivity(){

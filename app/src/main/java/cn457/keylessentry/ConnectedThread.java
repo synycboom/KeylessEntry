@@ -91,7 +91,8 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-        } catch (IOException e) { }
+        }
+        catch (IOException e) { }
     }
 
     public void callbackToSearchingActivity(int result){
@@ -115,6 +116,14 @@ public class ConnectedThread extends Thread {
         context.sendBroadcast(intent);
     }
 
+    public void callbackToManageKeyActivity(int result,String extra){
+        Intent intent = new Intent();
+        intent.setAction(BluetoothControl.MANAGEKEY_ACTION);
+        intent.putExtra(BluetoothControl.MANAGEKEY_RESULT, result);
+        intent.putExtra(BluetoothControl.MANAGEKEY_KEYS, extra);
+        context.sendBroadcast(intent);
+    }
+
     public void callbackToService(int result){
         Intent intent = new Intent();
         intent.setAction(BluetoothControl.BLUETOOTH_UNLOCK_ACTION);
@@ -129,8 +138,14 @@ public class ConnectedThread extends Thread {
     /* Call this from the main activity to shutdown the connection */
     public void cancel() {
         try {
-            mmSocket.close();
-            input.close();
+            if(mmOutStream != null)
+                mmOutStream.close();
+            if(input != null)
+                input.close();
+            if(mmInStream != null)
+                mmInStream.close();
+            if(mmSocket != null)
+                mmSocket.close();
         } catch (IOException e) { }
     }
 
@@ -142,6 +157,7 @@ public class ConnectedThread extends Thread {
                 state = UNLOCK;
                 callbackToService(BluetoothControl.UNLOCK_REQUESTPASS_SUCCESS);
             }else{
+                Log.i("DEBUG", message);
                 callbackToService(BluetoothControl.UNLOCK_REQUESTPASS_FAILED);
             }
             return;
@@ -178,26 +194,25 @@ public class ConnectedThread extends Thread {
     private void adminState(String message){
         if(message.contains("KeysAre:")){
             message = message.replace("KeysAre:","");
-
+            Log.i("DEBUG", message);
             if(message.equals("")){
                 BluetoothControl.keys.clear();
-                callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS);
+                callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS,"");
                 return;
             }
 
-            String[] keys = message.split(",");
-
-            for(String key : keys)
-                BluetoothControl.keys.add(new Key(key));
-
-            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS);
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS, message);
         }
         if(message.contains("RemoveSuccess")){
-            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_REMOVE_SUCCESS);
+            message = message.replace("RemoveSuccess->","");
+            Log.i("DEBUG", message);
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS, message);
         }
 
         if(message.contains("AddSuccess")){
-            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_ADD_SUCCESS);
+            message = message.replace("AddSuccess->","");
+            Log.i("DEBUG", message);
+            callbackToManageKeyActivity(BluetoothControl.MANAGEKEY_SHOW_SUCCESS, message);
         }
 
         if(message.contains("AddFailed")){

@@ -42,6 +42,7 @@ public class BluetoothControl {
     /**ManageKey Action**/
     public static final String MANAGEKEY_ACTION = "MANAGEKEY_ACTION";
     public static final String MANAGEKEY_RESULT = "MANAGEKEY_RESULT";
+    public static final String MANAGEKEY_KEYS = "MANAGEKEY_KEYS";
     public static final int MANAGEKEY_ADD_FAILED = 9;
     public static final int MANAGEKEY_ADD_SUCCESS = 10;
     public static final int MANAGEKEY_SHOW_FAILED = 11;
@@ -49,6 +50,8 @@ public class BluetoothControl {
     public static final int MANAGEKEY_REMOVE_FAILED = 13;
     public static final int MANAGEKEY_REMOVE_SUCCESS = 14;
     public static final int MANAGEKEY_SIGNOUT_SUCCESS = 15;
+
+
     public static final String KEY_TAG = "key_tag";
     public static List<Key> keys;
 
@@ -77,6 +80,10 @@ public class BluetoothControl {
     }
 
     public void resetConnection(){
+        if (connection == null)
+            return;
+
+        connection.cancel();
         connection = null;
     }
 
