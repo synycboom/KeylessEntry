@@ -75,11 +75,11 @@ public class UnlockModeActivity extends AppCompatActivity {
 
         if(isMyServiceRunning(EntryService.class)){
             startButton.setText("Stop");
-            startButton.setBackgroundColor(0xFFFF0000);
+            startButton.setBackgroundColor(0xFFCC0000);
         }
         else{
             startButton.setText("Start");
-            startButton.setBackgroundColor(0xFF00FF00);
+            startButton.setBackgroundColor(0xFF00CC00);
         }
 
         startButton.setOnClickListener(new View.OnClickListener() {

@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/manage_local_key_add_panel"
-            android:background="#FF001110">
+            android:background="#FFFFFF">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -48,14 +48,12 @@
                     android:layout_height="wrap_content"
                     android:text="Enter name: "
                     android:textSize="17dip"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="#FFFFFF"/>
+                    android:layout_centerHorizontal="true" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:background="#FFFFDD"
                     android:layout_centerInParent="true"
                     android:id="@+id/local_name_text_box" />
 
@@ -74,15 +72,13 @@
                     android:layout_height="wrap_content"
                     android:text="Enter key:     "
                     android:textSize="17dip"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="#FFFFFF"/>
+                    android:layout_centerHorizontal="true" />
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:ems="10"
-                    android:background="#FFFFDD"
                     android:layout_centerInParent="true"
                     android:id="@+id/local_key_text_box" />
 

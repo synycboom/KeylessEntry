@@ -39,15 +39,14 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/manage_key_add_panel"
-                android:background="#FF001110">
+                android:background="#FFFFFF"
+                android:id="@+id/manage_key_add_panel">
 
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:ems="10"
-                    android:background="#FFFFDD"
                     android:layout_centerInParent="true"
                     android:id="@+id/key_text_box" />
 
@@ -80,7 +79,7 @@
                     android:layout_marginBottom="13dp"
                     android:layout_centerHorizontal="true"
                     android:layout_above="@id/key_text_box"
-                    android:textColor="#FFFFFF"/>
+                    />
 
             </RelativeLayout>
 

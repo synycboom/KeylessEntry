@@ -42,7 +42,6 @@ public class SearchingActivity extends Activity {
 
 
     private int connectionType;
-    private BluetoothAdapter mBluetoothAdapter = null;
     private final int REQUEST_DISCOVERABLE_TIME = 10;
 
 
@@ -58,9 +57,11 @@ public class SearchingActivity extends Activity {
                 switch (result){
                     case BluetoothControl.CONNECTION_SUCCESS:
                         Log.i("Callback", "Success");
+                        hideLoading();
                         startActivity(new Intent(SearchingActivity.this, AuthenticationActivity.class));
                         break;
                     case BluetoothControl.CONNECTION_FAILED:
+                        hideLoading();
 //                        Toast failed =  Toast.makeText(SearchingActivity.this,"Connect Failed", Toast.LENGTH_SHORT);
 //                        failed.show();
                         break;
@@ -249,14 +250,11 @@ public class SearchingActivity extends Activity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAdapter.getCheckedPosition() == -1){
-                    Toast prevent =  Toast.makeText(SearchingActivity.this,"Please select one of device(s)", Toast.LENGTH_SHORT);
+                if (mAdapter.getCheckedPosition() == -1) {
+                    Toast prevent = Toast.makeText(SearchingActivity.this, "Please select one of device(s)", Toast.LENGTH_SHORT);
                     prevent.show();
                     return;
                 }
-
-                progressViewText.setText("Connecting");
-                background.setVisibility(View.VISIBLE);
 
                 /**TODO
                  * got a problem -- progress bar will not show if leave UI thread
@@ -265,8 +263,10 @@ public class SearchingActivity extends Activity {
                 BluetoothDevice dev = mDevices.get(mAdapter.getCheckedPosition()).getDeviceObj();
 
                 Log.i("Connect to ", dev.getName() + " " + dev.getAddress());
-                BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext(),false));
+                BluetoothControl.getInstance().setConnection(new ConnectThread(dev, getApplicationContext(), false));
                 BluetoothControl.getInstance().getConnection().start();
+
+                showLoading();
             }
         });
 
@@ -280,6 +280,7 @@ public class SearchingActivity extends Activity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideLoading();
                 backToMainActivity();
             }
         });
@@ -330,6 +331,15 @@ public class SearchingActivity extends Activity {
         startActivity(new Intent(SearchingActivity.this, MainActivity.class));
     }
 
+    private void showLoading(){
+        okButton.setText("Connecting . . .");
+        okButton.setEnabled(false);
+    }
+
+    private void hideLoading(){
+        okButton.setText("Connect");
+        okButton.setEnabled(true);
+    }
 
 }
 

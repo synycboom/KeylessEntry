@@ -28,13 +28,13 @@ public class AuthenticationActivity extends AppCompatActivity {
                     case BluetoothControl.AUTHENTICATION_SUCCESS:
                         Log.i("AUTHEN", "Success");
                         resultText.setText("Sign in Success");
-                        resultText.setTextColor(0xCC0000);
+                        resultText.setTextColor(0xFF00CC00);
                         goToManageKeyActivity();
                         break;
                     case BluetoothControl.AUTHENTICATION_FAILED:
                         Log.i("AUTHEN", "Failed");
                         resultText.setText("Sign in Failed");
-                        resultText.setTextColor(0x00CC00);
+                        resultText.setTextColor(0xFFCC0000);
                         break;
                 }
 
