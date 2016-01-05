@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.view.View;
 
+import cn457.keylessentry.LocalKeyManager;
 import cn457.keylessentry.R;
 import cn457.keylessentry.api.KeyObject;
 import cn457.keylessentry.api.PinObject;
@@ -91,7 +92,7 @@ public class GetKeyDialogFragment extends DialogFragment {
                             public void onResponse(Response<PinObject> response, Retrofit retrofit) {
                                 Log.v("Upload", "success");
                                 pDialog.dismiss();
-                                PinObject obj = response.body();
+                                final PinObject obj = response.body();
                                 final boolean validKey;
 
                                 String title;
@@ -106,12 +107,13 @@ public class GetKeyDialogFragment extends DialogFragment {
                                     validKey = false;
                                 }
 
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                AlertDialog.Builder builder = new AlertDialog.Builder(actContext);
                                 builder.setTitle(title).setMessage(message)
                                         .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 if(validKey) {
-                                                    /////// STORE KEY !!!!!!!!!!! ///////
+                                                    String keySplit[] = obj.key.split(":");
+                                                    LocalKeyManager.getInstance().setKey(keySplit[0],keySplit[1]);
                                                 }
                                             }
                                         });
@@ -122,7 +124,7 @@ public class GetKeyDialogFragment extends DialogFragment {
                             public void onFailure(Throwable t) {
                                 Log.e("Upload", t.getMessage());
                                 pDialog.dismiss();
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                AlertDialog.Builder builder = new AlertDialog.Builder(actContext);
                                 builder.setTitle("Failed").setMessage("Please send pin again")
                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {

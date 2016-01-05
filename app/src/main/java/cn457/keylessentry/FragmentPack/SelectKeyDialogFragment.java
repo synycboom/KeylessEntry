@@ -14,7 +14,9 @@ import com.squareup.okhttp.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import cn457.keylessentry.LocalKeyManager;
 import cn457.keylessentry.SharingActivity;
 import cn457.keylessentry.api.KeyObject;
 import cn457.keylessentry.api.PinObject;
@@ -47,11 +49,28 @@ public class SelectKeyDialogFragment extends DialogFragment{
         return frag;
     }
 
+    public Object setKeys[];
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mSelectedItems = new ArrayList();  // Where we track the selected items
-        final String[] listKeys = new String[]{"sss","sdfdsf","asdasd"};
+//        final String[] listKeys = new String[]{"sss","sdfdsf","asdasd"};
         //String[] listKeys = new String[keyLength];
+
+        LocalKeyManager.getInstance().setup(getContext());
+
+        synchronized (LocalKeyManager.getInstance()){
+            setKeys = LocalKeyManager.getInstance().getAll().toArray();
+        }
+
+        String[] listKeys = new String[setKeys.length];
+
+        int count = 0;
+        for(Object splitKey : setKeys) {
+            String tmp[] = ((String)splitKey).split(":");
+            listKeys[count] = tmp[0];
+        }
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the dialog title
@@ -63,7 +82,7 @@ public class SelectKeyDialogFragment extends DialogFragment{
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mSelectedItems.clear();
-                                mSelectedItems.add(listKeys[which]);
+                                mSelectedItems.add(setKeys[which]);
 
                             }
                         })
@@ -94,7 +113,7 @@ public class SelectKeyDialogFragment extends DialogFragment{
                                     Log.v("Upload", "success");
                                     pDialog.dismiss();
                                     KeyObject res = response.body();
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(actContext);
                                     builder.setTitle("Your Key PIN").setMessage(res.pin)
                                             .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
@@ -108,7 +127,7 @@ public class SelectKeyDialogFragment extends DialogFragment{
                                 public void onFailure(Throwable t) {
                                     Log.e("Upload", t.getMessage());
                                     pDialog.dismiss();
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(actContext);
                                     builder.setTitle("Failed").setMessage("Please send key again")
                                             .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
