@@ -7,13 +7,47 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/searching_listview_section"
         android:layout_weight="7">
 
-        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/listview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/listview_device"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:id="@+id/seaching_background">
+
+                <com.github.rahatarmanahmed.cpv.CircularProgressView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/progress_view"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    app:cpv_color="#2196F3"
+                    app:cpv_indeterminate="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="scanning"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/searching_scanning_text"
+                    android:layout_below="@id/progress_view"
+                    android:layout_marginTop="5dp"
+                    android:textSize="17dip"/>
+
+            </RelativeLayout>
+
+
+        </FrameLayout>
+
 
     </LinearLayout>
 
@@ -22,6 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/searching_button_section"
+        android:orientation="horizontal"
         android:layout_weight="1">
 
         <!--<Button-->

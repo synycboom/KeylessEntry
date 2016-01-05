@@ -4,13 +4,14 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme.NoActionBar" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -24,12 +25,30 @@
         <activity
             android:name=".SearchingActivity"
             android:label="@string/title_activity_searching"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SharingActivity"
             android:label="@string/title_activity_sharing"
             android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".AuthenticationActivity"
+            android:label="@string/title_activity_authentication"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity android:name=".ManageRemoteKeyActivity" >
+        </activity>
+
+        <service
+            android:name=".EntryService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity android:name=".ManageLocalKeyActivity" >
+        </activity>
+        <activity android:name=".SelectKeyActivity" />
+        <activity android:name=".UnlockModeActivity" >
         </activity>
     </application>
 

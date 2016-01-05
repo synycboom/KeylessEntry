@@ -5,7 +5,6 @@ package cn457.keylessentry;
  */
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import android.widget.CheckedTextView;
 
 import java.util.List;
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomDeviceListAdapter extends BaseAdapter {
     private static int checkedId;
 
     private ViewHolder mViewHolder;
@@ -22,7 +21,7 @@ public class CustomAdapter extends BaseAdapter {
     private List<Device> mDevices;
     private Device mDevice;
 
-    public CustomAdapter(Activity activity, List<Device> mDevices) {
+    public CustomDeviceListAdapter(Activity activity, List<Device> mDevices) {
         mInflater = (LayoutInflater) activity.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         this.mDevices = mDevices;
@@ -49,7 +48,7 @@ public class CustomAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.device_name, parent, false);
             mViewHolder = new ViewHolder();
-            mViewHolder.checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checked_text_view);
+            mViewHolder.checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checked_text_device);
 
             convertView.setTag(mViewHolder);
 
@@ -68,6 +67,16 @@ public class CustomAdapter extends BaseAdapter {
 
     public boolean getIsChecked(int position){
         return ((Device) getItem(position)).getIsChecked();
+    }
+
+    public int getCheckedPosition(){
+        int pos = 0;
+        for(Device dev: mDevices){
+            if(dev.getIsChecked())
+                return pos;
+            pos++;
+        }
+        return -1;
     }
 
     public void setChecked(int position){
